@@ -13,6 +13,27 @@ interface ITodo {
 function App() {
   const [input, setInput] = useState<string>("");
   const [priority, setPriority] = useState<IPriority>({ level: "Moyenne" });
+  const [todos, setTodos] = useState<ITodo[]>([]);
+
+  function addTodo() {
+    if (input.trim() === "") {
+      return;
+    }
+
+    const newTodo: ITodo = {
+      id: Date.now(),
+      text: input.trim(),
+      priority: { level: "Moyenne" },
+    };
+
+    const newTodos = [newTodo, ...todos];
+
+    setTodos(newTodos);
+    setInput("");
+    setPriority({ level: "Moyenne" });
+
+    console.log(newTodos);
+  }
 
   return (
     <>
@@ -41,7 +62,9 @@ function App() {
               <option value="Moyenne">Moyenne</option>
               <option value="Basse">Basse</option>
             </select>
-            <button className="btn btn-primary">Ajouter</button>
+            <button onClick={addTodo} className="btn btn-primary">
+              Ajouter
+            </button>
           </div>
         </div>
       </div>
