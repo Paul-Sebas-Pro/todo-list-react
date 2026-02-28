@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IPriority {
   level: "Urgente" | "Moyenne" | "Basse";
@@ -13,7 +13,14 @@ interface ITodo {
 function App() {
   const [input, setInput] = useState<string>("");
   const [priority, setPriority] = useState<IPriority>({ level: "Moyenne" });
-  const [todos, setTodos] = useState<ITodo[]>([]);
+
+  const savedTodos = localStorage.getItem("todos");
+  const initialTodos = savedTodos ? JSON.parse(savedTodos) : [];
+  const [todos, setTodos] = useState<ITodo[]>([initialTodos]);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   function addTodo() {
     if (input.trim() === "") {
