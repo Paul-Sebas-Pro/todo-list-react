@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import TodoItem from "./TodoItem";
 
-interface IPriority {
-  level: "Urgente" | "Moyenne" | "Basse";
+export interface IPriority {
+  level: "Urgente" | "Moyenne" | "Basse" | "Tous";
 }
 
-interface ITodo {
+export interface ITodo {
   id: number;
   text: string;
   priority: IPriority;
@@ -15,8 +16,10 @@ function App() {
   const [priority, setPriority] = useState<IPriority>({ level: "Moyenne" });
 
   const savedTodos = localStorage.getItem("todos");
-  const initialTodos = savedTodos ? JSON.parse(savedTodos) : [];
-  const [todos, setTodos] = useState<ITodo[]>([initialTodos]);
+  const initialTodos: ITodo[] = savedTodos ? JSON.parse(savedTodos) : [];
+  const [todos, setTodos] = useState<ITodo[]>(initialTodos);
+
+  const [filter, setFilter] = useState<IPriority>({ level: "Tous" });
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -30,7 +33,7 @@ function App() {
     const newTodo: ITodo = {
       id: Date.now(),
       text: input.trim(),
-      priority: { level: "Moyenne" },
+      priority: priority,
     };
 
     const newTodos = [newTodo, ...todos];
@@ -38,9 +41,12 @@ function App() {
     setTodos(newTodos);
     setInput("");
     setPriority({ level: "Moyenne" });
-
-    console.log(newTodos);
   }
+
+  const filteredTodos: ITodo[] =
+    filter.level === "Tous"
+      ? todos
+      : todos.filter((todo) => todo.priority.level === filter.level);
 
   return (
     <>
@@ -72,6 +78,29 @@ function App() {
             <button onClick={addTodo} className="btn btn-primary">
               Ajouter
             </button>
+          </div>
+          <div className="space-y flex-1 h-fit">
+            <div className="flex flex-wrap gap-4">
+              <button
+                className={`btn btn-soft ${filter.level === "Tous" ? "btn-primary" : ""}`}
+                onClick={() => {
+                  setFilter({ level: "Tous" });
+                }}
+              >
+                Tous
+              </button>
+            </div>
+            {filteredTodos.length > 0 ? (
+              <ul className="divide-y divide-primary/20">
+                {filteredTodos.map((todo) => (
+                  <li key={todo.id}>
+                    <TodoItem todo={todo} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>Aucun tâche trouvée.</div>
+            )}
           </div>
         </div>
       </div>
