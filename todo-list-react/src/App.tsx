@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface IPriority {
   level: "Urgente" | "Moyenne" | "Basse";
 }
@@ -9,6 +11,9 @@ interface ITodo {
 }
 
 function App() {
+  const [input, setInput] = useState<string>("");
+  const [priority, setPriority] = useState<IPriority>({ level: "Moyenne" });
+
   return (
     <>
       <div className="flex justify-center">
@@ -18,8 +23,20 @@ function App() {
               type="text"
               className="input w-full"
               placeholder="Ajouter une tâche..."
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
             />
-            <select className="select w-full">
+            <select
+              className="select w-full"
+              value={priority.level}
+              onChange={(e) => {
+                setPriority({
+                  level: e.target.value as "Urgente" | "Moyenne" | "Basse",
+                });
+              }}
+            >
               <option value="Urgente">Urgente</option>
               <option value="Moyenne">Moyenne</option>
               <option value="Basse">Basse</option>
