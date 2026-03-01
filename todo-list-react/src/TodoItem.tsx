@@ -16,7 +16,17 @@ const TodoItem = ({ todo }: TodoProps) => {
           <span className="text-md font-bold">
             <span>{todo.text}</span>
           </span>
-          <span>{todo.priority}</span>
+          <span
+            className={`badge badge-sm badge-soft ${
+              todo.priority === "Urgente"
+                ? "badge-error"
+                : todo.priority === "Moyenne"
+                  ? "badge-warning"
+                  : "badge-success"
+            }`}
+          >
+            {todo.priority}
+          </span>
         </div>
       </div>
     </li>
