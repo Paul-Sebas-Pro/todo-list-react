@@ -4,6 +4,12 @@ type TodoProps = {
   todo: ITodo;
 };
 
+const priorityColor = {
+  Urgente: "badge-error",
+  Moyenne: "badge-warning",
+  Basse: "badge-success",
+};
+
 const TodoItem = ({ todo }: TodoProps) => {
   return (
     <li className="p-3">
@@ -13,17 +19,13 @@ const TodoItem = ({ todo }: TodoProps) => {
             type="checkbox"
             className="checkbox checkbox-primary checkbox-sm"
           />
+
           <span className="text-md font-bold">
             <span>{todo.text}</span>
           </span>
+
           <span
-            className={`badge badge-sm badge-soft ${
-              todo.priority === "Urgente"
-                ? "badge-error"
-                : todo.priority === "Moyenne"
-                  ? "badge-warning"
-                  : "badge-success"
-            }`}
+            className={`badge badge-sm badge-soft ${priorityColor[todo.priority]}`}
           >
             {todo.priority}
           </span>
