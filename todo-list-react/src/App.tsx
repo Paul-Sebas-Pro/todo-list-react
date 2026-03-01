@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
 import TodoItem from "./TodoItem";
 
-export interface IPriority {
-  level: "Urgente" | "Moyenne" | "Basse" | "Tous";
-}
+export type Priority = "Urgente" | "Moyenne" | "Basse";
+export type Filter = Priority | "Tous";
 
 export interface ITodo {
   id: number;
   text: string;
-  priority: IPriority;
+  priority: Priority;
 }
 
 function App() {
-  const [input, setInput] = useState<string>("");
-  const [priority, setPriority] = useState<IPriority>({ level: "Moyenne" });
+  const [input, setInput] = useState("");
+  const [priority, setPriority] = useState<Priority>("Moyenne");
 
   const savedTodos = localStorage.getItem("todos");
   const initialTodos: ITodo[] = savedTodos ? JSON.parse(savedTodos) : [];
-  const [todos, setTodos] = useState<ITodo[]>(initialTodos);
 
-  const [filter, setFilter] = useState<IPriority>({ level: "Tous" });
+  const [todos, setTodos] = useState<ITodo[]>(initialTodos);
+  const [filter, setFilter] = useState<Filter>("Tous");
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
@@ -36,17 +35,15 @@ function App() {
       priority: priority,
     };
 
-    const newTodos = [newTodo, ...todos];
-
-    setTodos(newTodos);
+    setTodos([newTodo, ...todos]);
     setInput("");
-    setPriority({ level: "Moyenne" });
+    setPriority("Moyenne");
   }
 
   const filteredTodos: ITodo[] =
-    filter.level === "Tous"
+    filter === "Tous"
       ? todos
-      : todos.filter((todo) => todo.priority.level === filter.level);
+      : todos.filter((todo) => todo.priority === filter);
 
   return (
     <>
@@ -62,19 +59,19 @@ function App() {
                 setInput(e.target.value);
               }}
             />
+
             <select
               className="select w-full"
-              value={priority.level}
+              value={priority}
               onChange={(e) => {
-                setPriority({
-                  level: e.target.value as "Urgente" | "Moyenne" | "Basse",
-                });
+                setPriority(e.target.value as Priority);
               }}
             >
               <option value="Urgente">Urgente</option>
               <option value="Moyenne">Moyenne</option>
               <option value="Basse">Basse</option>
             </select>
+
             <button onClick={addTodo} className="btn btn-primary">
               Ajouter
             </button>
@@ -82,14 +79,15 @@ function App() {
           <div className="space-y flex-1 h-fit">
             <div className="flex flex-wrap gap-4">
               <button
-                className={`btn btn-soft ${filter.level === "Tous" ? "btn-primary" : ""}`}
+                className={`btn btn-soft ${filter === "Tous" ? "btn-primary" : ""}`}
                 onClick={() => {
-                  setFilter({ level: "Tous" });
+                  setFilter("Tous");
                 }}
               >
                 Tous
               </button>
             </div>
+
             {filteredTodos.length > 0 ? (
               <ul className="divide-y divide-primary/20">
                 {filteredTodos.map((todo) => (
